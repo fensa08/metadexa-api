@@ -1,0 +1,46 @@
+/node_modules
+
+package-lock.json
+
+
+/.netlify
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# testing
+/coverage
+
+# production
+/build
+
+# bundle
+/dist
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+/.vscode
+
+# build artefacts
+dist/*
+build/*
+coverage/*
+
+# data definition files
+**/*.d.ts
+
+# 3rd party libs
+/src/public/
+ 
+# custom definition files
+/src/types/
+
+/test
+
+/logs
