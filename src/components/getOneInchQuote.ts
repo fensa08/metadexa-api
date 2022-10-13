@@ -32,7 +32,7 @@ function createQueryStringRequestObject(
 			request.affiliateFee !== '' || request.affiliateFee !== undefined
 				? request.affiliateFee
 				: null,
-		destReceiver: FLASH_WALLET[request.chainId], // TODO retrieve from on-chain metaswap contract; be carefull if the flash wallet has changed;
+		destReceiver: FLASH_WALLET[request.chainId] ?? request.fromAddress,
 		fromAddress: request.fromAddress,
 		disableEstimate: true,
 	};
