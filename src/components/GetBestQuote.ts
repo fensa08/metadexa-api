@@ -28,6 +28,7 @@ async function getGasPrice(chainId: number): Promise<Result<string, Error>> {
 
 async function estimateGas(
 	from: string,
+	to: string,
 	value: string,
 	chainId: number,
 	data: string,
@@ -35,7 +36,7 @@ async function estimateGas(
 	const web3 = new Web3(Web3.givenProvider || PROVIDER_ADDRESS[chainId]);
 	try {
 		const estimate = await web3.eth.estimateGas({
-			to: METASWAP_ROUTER_CONTRACT_ADDRESS[chainId],
+			to,
 			from,
 			data,
 			value,
@@ -45,6 +46,37 @@ async function estimateGas(
 	} catch (error) {
 		return new Err(new Error(`Gas estimation error: ${error.message}`));
 	}
+}
+
+async function getRouterlessTransactionData(
+	betterRoute: AggregatorQuote,
+	slippage: string,
+	chainId: number,
+): Promise<Result<TransactionData, RequestError>> {
+	const estimatedGas = await estimateGas(
+		betterRoute.from,
+		betterRoute.to,
+		betterRoute.value,
+		chainId,
+		betterRoute.data,
+	);
+	const gasPrice = await getGasPrice(chainId);
+	if (estimatedGas.err) {
+		return new Err({
+			statusCode: 500,
+			data: `Transaction simulation failed: ${estimatedGas.val}`,
+		});
+	}
+	const gas = estimatedGas.unwrap();
+	const result: TransactionData = {
+		from: betterRoute.from,
+		to: betterRoute.to,
+		data: betterRoute.data,
+		gas,
+		value: betterRoute.value,
+		gasPrice: gasPrice.ok ? gasPrice.unwrap() : '0',
+	};
+	return new Ok(result);
 }
 
 async function getTransactionData(
@@ -161,6 +193,7 @@ async function getTransactionData(
 	// TODO; can be paralilized
 	const estimatedGas = await estimateGas(
 		betterRoute.from,
+		METASWAP_ROUTER_CONTRACT_ADDRESS[chainId],
 		betterRoute.value,
 		chainId,
 		encodedData,
@@ -240,11 +273,20 @@ export default async function getBestQuote(
 	let txData: TransactionData | undefined;
 
 	if (!request.skipValidation) {
-		const transactionData = await getTransactionData(
-			betterRoute.unwrap(),
-			request.slippage,
-			request.chainId,
-		);
+		let transactionData;
+		if (METASWAP_ROUTER_CONTRACT_ADDRESS[request.chainId]) {
+			transactionData = await getTransactionData(
+				betterRoute.unwrap(),
+				request.slippage,
+				request.chainId,
+			);
+		} else {
+			transactionData = await getRouterlessTransactionData(
+				betterRoute.unwrap(),
+				request.slippage,
+				request.chainId,
+			);
+		}
 		// check if validation is success; return if not
 		if (transactionData.err) {
 			return transactionData;

@@ -32,4 +32,8 @@ export const ZEROX_AGGREGATOR_ADDRESS: AddressMap = {
 
 export const PROVIDER_ADDRESS: AddressMap = {
 	[SupportedChainId.POLYGON]: 'https://polygon-rpc.com',
+	[SupportedChainId.ARBITRUM_ONE]: 'https://arb1.arbitrum.io/rpc',
+	[SupportedChainId.MAINNET]:
+		'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+	[SupportedChainId.OPTIMISM]: 'https://mainnet.optimism.io',
 };
