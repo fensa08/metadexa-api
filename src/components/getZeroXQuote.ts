@@ -57,7 +57,7 @@ function normalizeZeroXResponse(
 		buyAmount: response.buyAmount,
 		sellTokenAddress: response.sellTokenAddress,
 		sellAmount: response.sellAmount,
-
+		allowanceTarget: response.allowanceTarget,
 		from,
 		recipient,
 

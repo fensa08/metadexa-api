@@ -193,7 +193,8 @@ async function getTransactionData(
 	// TODO; can be paralilized
 	const estimatedGas = await estimateGas(
 		betterRoute.from,
-		METASWAP_ROUTER_CONTRACT_ADDRESS[chainId],
+		METASWAP_ROUTER_CONTRACT_ADDRESS[chainId] ??
+			betterRoute.allowanceTarget,
 		betterRoute.value,
 		chainId,
 		encodedData,
@@ -212,7 +213,9 @@ async function getTransactionData(
 	// build transaction object
 	const result: TransactionData = {
 		from: betterRoute.from,
-		to: METASWAP_ROUTER_CONTRACT_ADDRESS[chainId],
+		to:
+			METASWAP_ROUTER_CONTRACT_ADDRESS[chainId] ??
+			betterRoute.allowanceTarget,
 		data: encodedData,
 		gas,
 		value: betterRoute.value,
@@ -238,7 +241,8 @@ function getNormalizedResponse(
 				betterRoute.sellTokenAddress ===
 				'0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 					? '0x0000000000000000000000000000000000000000'
-					: METASWAP_ROUTER_CONTRACT_ADDRESS[chainId],
+					: METASWAP_ROUTER_CONTRACT_ADDRESS[chainId] ??
+					  betterRoute.allowanceTarget,
 			tx: txData,
 		},
 		aggregatorQuote: betterRoute,
@@ -259,7 +263,6 @@ export default async function getBestQuote(
 			data: 'Aggregator request failure',
 		});
 	}
-
 	const betterRoute: Result<AggregatorQuote, RequestError> = compareRoutes(
 		zeroXQuote,
 		oneInchQuote,

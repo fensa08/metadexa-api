@@ -15,7 +15,7 @@ export interface AggregatorQuote {
 
 	sellTokenAddress: string;
 	sellAmount: string;
-
+	allowanceTarget: string;
 	from: string;
 	recipient: string | undefined;
 
