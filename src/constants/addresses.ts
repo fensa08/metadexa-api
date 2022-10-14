@@ -24,6 +24,10 @@ export const FLASH_WALLET: AddressMap = {
 
 export const ONEINCH_AGGREGATOR_ADDRESS: AddressMap = {
 	[SupportedChainId.POLYGON]: '0x1111111254fb6c44bAC0beD2854e76F90643097d',
+	[SupportedChainId.ARBITRUM_ONE]:
+		'0x1111111254fb6c44bAC0beD2854e76F90643097d',
+	[SupportedChainId.OPTIMISM]: '0x1111111254760f7ab3f16433eea9304126dcd199',
+	[SupportedChainId.MAINNET]: '0x1111111254fb6c44bAC0beD2854e76F90643097d',
 };
 
 export const ZEROX_AGGREGATOR_ADDRESS: AddressMap = {

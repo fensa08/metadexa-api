@@ -16,4 +16,5 @@ export interface ZeroXQuoteResponse {
 	sellTokenAddress: string;
 	buyAmount: string | undefined;
 	sellAmount: string | undefined;
+	allowanceTarget: string;
 }

@@ -12,7 +12,10 @@ import { AggregatorQuote, TradeType } from '../interfaces/AggregatorQuote';
 import { OneInchQueryParameters } from '../interfaces/OneInch/OneInchQueryParameters';
 
 import { OneInchSwapResponse } from '../interfaces/OneInch/OneInchSwapResponse';
-import { FLASH_WALLET } from '../constants/addresses';
+import {
+	FLASH_WALLET,
+	ONEINCH_AGGREGATOR_ADDRESS,
+} from '../constants/addresses';
 
 require('axios-debug-log');
 
@@ -42,6 +45,7 @@ function normalizeOneInchSwapResponse(
 	response: OneInchSwapResponse,
 	from: string,
 	recipient: string,
+	chainId: number | string,
 ): AggregatorQuote {
 	return {
 		to: response.tx.to,
@@ -52,7 +56,7 @@ function normalizeOneInchSwapResponse(
 		buyAmount: response.toTokenAmount,
 		sellTokenAddress: response.fromToken.address,
 		sellAmount: response.fromTokenAmount,
-
+		allowanceTarget: ONEINCH_AGGREGATOR_ADDRESS[chainId],
 		from,
 		recipient,
 
@@ -64,6 +68,7 @@ function normalizeOneInchQuoteResponse(
 	response: OneInchSwapResponse,
 	from: string,
 	recipient: string,
+	chainId: string | number,
 ): AggregatorQuote {
 	return {
 		to: undefined,
@@ -74,7 +79,7 @@ function normalizeOneInchQuoteResponse(
 		buyAmount: response.toTokenAmount,
 		sellTokenAddress: response.fromToken.address,
 		sellAmount: response.fromTokenAmount,
-
+		allowanceTarget: ONEINCH_AGGREGATOR_ADDRESS[chainId],
 		from,
 		recipient,
 
@@ -101,9 +106,13 @@ export async function getOneInchQuoteApi(
 				},
 			)}`,
 		);
-
 		return new Ok(
-			normalizeOneInchQuoteResponse(r.data, fromAddress, recipient),
+			normalizeOneInchQuoteResponse(
+				r.data,
+				fromAddress,
+				recipient,
+				request.chainId,
+			),
 		);
 	} catch (exception) {
 		console.log(
@@ -138,7 +147,12 @@ export async function getOneInchSwapApi(
 		);
 
 		return new Ok(
-			normalizeOneInchSwapResponse(r.data, fromAddress, recipient),
+			normalizeOneInchSwapResponse(
+				r.data,
+				fromAddress,
+				recipient,
+				chainId,
+			),
 		);
 	} catch (exception) {
 		console.log(
