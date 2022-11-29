@@ -90,6 +90,7 @@ export default class App {
 		const data: Result<CompositeQuote, RequestError> = await getBestQuote(
 			requestQuote.unwrap(),
 		);
+
 		// eslint-disable-next-line no-prototype-builtins
 		if (data.err) {
 			response.status(data.val.statusCode).send(data.val.data);

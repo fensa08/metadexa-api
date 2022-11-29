@@ -2,6 +2,7 @@
 
 import Web3 from 'web3';
 import { Ok, Err, Result } from 'ts-results';
+import BigNumber from 'bignumber.js';
 import { TransactionData } from '../interfaces/ResultQuote';
 import { RequestError } from '../interfaces/RequestError';
 import {
@@ -88,7 +89,6 @@ async function getTransactionData(
 
 	const tokenFrom = betterRoute.sellTokenAddress;
 	const tokenTo = betterRoute.buyTokenAddress;
-
 	const amountFrom =
 		betterRoute.tradeType === TradeType.ExactInput
 			? web3.utils.toHex(betterRoute.sellAmount)
@@ -101,7 +101,9 @@ async function getTransactionData(
 									.toBN(100000)
 									.add(
 										web3.utils.toBN(
-											Number(slippage) * 100000,
+											new BigNumber(slippage)
+												.multipliedBy(100000)
+												.toString(),
 										),
 									),
 							),
@@ -120,7 +122,9 @@ async function getTransactionData(
 									.toBN(100000)
 									.sub(
 										web3.utils.toBN(
-											Number(slippage) * 100000,
+											new BigNumber(slippage)
+												.multipliedBy(100000)
+												.toString(),
 										),
 									),
 							),

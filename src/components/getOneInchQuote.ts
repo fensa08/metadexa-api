@@ -26,7 +26,10 @@ function createQueryStringRequestObject(
 		fromTokenAddress: request.sellTokenAddress,
 		toTokenAddress: request.buyTokenAddress,
 		amount: request.sellTokenAmount ? request.sellTokenAmount : null,
-		slippage: `${+request.slippage * 100}`,
+		slippage:
+			request.chainId !== 137
+				? `${+request.slippage * 100}`
+				: request.slippage,
 		referrerAddress:
 			request.affiliate !== '' || request.affiliate !== undefined
 				? request.affiliate
@@ -93,7 +96,6 @@ export async function getOneInchQuoteApi(
 	const { fromAddress, recipient, chainId } = request;
 
 	const queryString = createQueryStringRequestObject(request);
-
 	try {
 		const instance = axios.create();
 		instance.defaults.timeout = 5000;
