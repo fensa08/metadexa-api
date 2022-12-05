@@ -20,6 +20,7 @@ import simulateTransaction, {
 	buildGaslessAggregatorCallData,
 	getTransactionData,
 } from './utils';
+import { GAS_OVERHEAD } from '../constants/constants';
 
 async function getGasPrice(chainId: number): Promise<Result<string, Error>> {
 	const web3 = new Web3(Web3.givenProvider || PROVIDER_ADDRESS[chainId]);
@@ -193,7 +194,6 @@ export default async function getGaslessQuote(
 		? resultQuote.tx.gas
 		: resultQuote.estimatedGas;
 
-	const GAS_OVERHEAD = '130000';
 	const web3 = new Web3();
 	const gasFees = web3.utils
 		.toBN(gasPrice.unwrap())
